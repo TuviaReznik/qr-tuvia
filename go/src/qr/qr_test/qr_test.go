@@ -1,6 +1,6 @@
 package qr_test
 
-// installations:
+// installations::
 //  ubuntu - sudo apt-get install golang gcc libgl1-mesa-dev xorg-dev
 
 import (
