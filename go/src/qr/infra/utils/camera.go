@@ -6,6 +6,9 @@ import (
 	"image"
 	"image/jpeg"
 	"os"
+	"os/exec"
+	"runtime"
+	"time"
 
 	"github.com/blackjack/webcam"
 )
@@ -16,11 +19,6 @@ const (
 
 func getCameraDevice() string {
 	return "/dev/video0"
-	// return "disp0"
-	// return "disp0:dcpav-video-interface-epic:0"
-	// return "dcpav-video-interface-epic"
-	// return "disp0:dcpav-video-interface-epi"
-	// return "dcpav-video-interface-epi"
 }
 
 func getVideoStream(fileName string, frame []byte) error {
@@ -88,6 +86,26 @@ func capturePicture(targetFileName string) error {
 	return getVideoStream(targetFileName, frame)
 }
 
+func capturePictureMac(targetFileName string) error {
+	cmd := exec.Command("imagesnap" /*, "-w", "0.1"*/, targetFileName)
+	err := cmd.Start()
+	if err != nil {
+		return fmt.Errorf("failed to run command : imagesnap")
+	}
+	time.Sleep(time.Second)
+	// err = cmd.Wait()
+	// if err != nil {
+	// 	return fmt.Errorf("failed to wait for command : imagesnap")
+	// }
+	return nil
+}
+
 func CapturePicture(targetFileName string) error {
-	return capturePicture(targetFileName)
+	if runtime.GOOS == "linux" {
+		return capturePicture(targetFileName)
+	}
+	if runtime.GOOS == "darwin" {
+		return capturePictureMac(targetFileName)
+	}
+	return fmt.Errorf("unsupported operating system")
 }
