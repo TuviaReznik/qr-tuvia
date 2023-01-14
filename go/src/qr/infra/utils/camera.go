@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"time"
 
 	"github.com/blackjack/webcam"
 )
@@ -87,16 +86,15 @@ func capturePicture(targetFileName string) error {
 }
 
 func capturePictureMac(targetFileName string) error {
-	cmd := exec.Command("imagesnap" /*, "-w", "0.1"*/, targetFileName)
+	cmd := exec.Command("imagesnap", "-w", "1.00", targetFileName)
 	err := cmd.Start()
 	if err != nil {
 		return fmt.Errorf("failed to run command : imagesnap")
 	}
-	time.Sleep(time.Second)
-	// err = cmd.Wait()
-	// if err != nil {
-	// 	return fmt.Errorf("failed to wait for command : imagesnap")
-	// }
+	err = cmd.Wait()
+	if err != nil {
+		return fmt.Errorf("failed to wait for command : imagesnap")
+	}
 	return nil
 }
 
