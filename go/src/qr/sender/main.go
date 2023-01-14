@@ -19,6 +19,8 @@ func main() {
 	dstFileName := flag.String("dst", defaultDstFile, "target file name")
 	flag.Parse()
 
+	fmt.Printf("sending  %s  to  %s  on other computer.\n", *srcFileName, *dstFileName)
+
 	err = sender.RunSender(*srcFileName, *dstFileName)
 	if err != nil {
 		fmt.Println("--- ERROR:", err)
