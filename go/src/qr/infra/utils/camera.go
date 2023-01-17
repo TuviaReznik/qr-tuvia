@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"time"
 
 	"github.com/blackjack/webcam"
 )
@@ -16,11 +17,11 @@ const (
 	topQuality = 100
 )
 
-func getCameraDevice() string {
+func getLinuxCameraDevice() string {
 	return "/dev/video0"
 }
 
-func getVideoStream(fileName string, frame []byte) error {
+func saveFrame(fileName string, frame []byte) error {
 
 	if len(frame) == 0 {
 		return fmt.Errorf("empty frame")
@@ -35,6 +36,7 @@ func getVideoStream(fileName string, frame []byte) error {
 }
 
 func saveContentToImageFile(fileName string, body []byte) error {
+	fmt.Println("--- save")
 	img, _, err := image.Decode(bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to decode image: %w", err)
@@ -46,6 +48,8 @@ func saveContentToImageFile(fileName string, body []byte) error {
 	}
 	defer out.Close()
 
+	time.Sleep(time.Second)
+
 	var opts jpeg.Options
 	opts.Quality = topQuality
 
@@ -56,8 +60,8 @@ func saveContentToImageFile(fileName string, body []byte) error {
 	return nil
 }
 
-func capturePicture(targetFileName string) error {
-	cam, err := webcam.Open(getCameraDevice())
+func capturePictureLinux(targetFileName string) error {
+	cam, err := webcam.Open(getLinuxCameraDevice())
 	if err != nil {
 		return fmt.Errorf("failed to open camera: %w", err)
 	}
@@ -82,7 +86,7 @@ func capturePicture(targetFileName string) error {
 	if err != nil {
 		return fmt.Errorf("failed to read from camera: %w", err)
 	}
-	return getVideoStream(targetFileName, frame)
+	return saveFrame(targetFileName, frame)
 }
 
 func capturePictureMac(targetFileName string) error {
@@ -100,7 +104,7 @@ func capturePictureMac(targetFileName string) error {
 
 func CapturePicture(targetFileName string) error {
 	if runtime.GOOS == "linux" {
-		return capturePicture(targetFileName)
+		return capturePictureLinux(targetFileName)
 	}
 	if runtime.GOOS == "darwin" {
 		return capturePictureMac(targetFileName)

@@ -61,7 +61,7 @@ func RunReceiver() (string, error) {
 }
 
 func getPackage(serialNum int) (string, error) {
-	err := utils.CapturePicture(TmpQrFileRead)
+	err := utils.CapturePictureToFile(TmpQrFileRead)
 	if err != nil {
 		return "", fmt.Errorf("failed to capture picture: %w", err)
 	}

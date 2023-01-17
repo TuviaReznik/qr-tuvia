@@ -14,6 +14,7 @@ import (
 	"github.com/tuvirz/qr/go/src/qr/infra/types"
 
 	// "github.com/lazywei/go-opencv/opencv"
+
 	"github.com/makiuchi-d/gozxing"
 	"github.com/makiuchi-d/gozxing/qrcode"
 	"github.com/skratchdot/open-golang/open"
@@ -50,10 +51,12 @@ func SaveQrCodeToImageFile(body []byte, fileName string) error {
 func SendTextAsQRCode(text, writeFile string) error {
 	enc := qrcode.NewQRCodeWriter()
 	img, err := enc.Encode(text, gozxing.BarcodeFormat_QR_CODE,
-		types.QRCodeSize, types.QRCodeSize, nil)
+		types.FrameSize, types.FrameSize, nil)
 	if err != nil {
 		return fmt.Errorf("failed to encode text: %w", err)
 	}
+
+	// image := MirrorImage(img)
 
 	file, err := os.Create(writeFile)
 	if err != nil {
@@ -100,6 +103,7 @@ func QrCodeToText(fileName string) (string, error) {
 
 	qrReader := qrcode.NewQRCodeReader()
 	result, err := qrReader.Decode(bbm, nil)
+	fmt.Println("--- res:", result)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode QRCode: %w", err)
 	}
@@ -138,23 +142,24 @@ func BuildSerialAndDataPack(serial int, data string) string {
 	return fmt.Sprintf("%d %s", serial, data)
 }
 
-func WriteToFileOverride(fileName string, body []byte) error {
-	file, err := os.Create(fileName)
-	if err != nil {
-		return fmt.Errorf("failed to override file: %w", err)
-	}
-
-	defer file.Close()
-
-	_, err = file.Write(body)
-	if err != nil {
-		return fmt.Errorf("failed to wt+rite to file: %w", err)
-	}
-
-	return nil
-}
-
 func DisplayImage(fileName string) {
 	open.Run(fileName)
 	time.Sleep(time.Millisecond * types.WaitInterval)
+}
+
+func CapturePictureToFile(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("failed to create qr code file: %w", err)
+	}
+
+	err = CapturePicture(filename)
+	if err != nil {
+		return fmt.Errorf("failed to capture picture: %w", err)
+	}
+	err = file.Close()
+	if err != nil {
+		return fmt.Errorf("failed to close qr code file: %w", err)
+	}
+	return nil
 }

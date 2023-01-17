@@ -45,7 +45,7 @@ func TestCaptureAndDecode(t *testing.T) {
 	//  make sure there is QRCode open on your phone screen.
 
 	tmpCaptureFile := "___tmp_test_qr_code___.jpeg"
-	err := utils.CapturePicture(tmpCaptureFile)
+	err := utils.CapturePictureToFile(tmpCaptureFile)
 	require.NoError(t, err)
 
 	res, err := utils.QrCodeToText(tmpCaptureFile)
