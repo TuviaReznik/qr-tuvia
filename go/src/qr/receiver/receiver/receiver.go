@@ -17,11 +17,6 @@ const (
 )
 
 func RunReceiver() (string, error) {
-	_, err := os.Create(TmpQrFileWrite)
-	if err != nil {
-		return "", fmt.Errorf("failed to create qr code file: %w", err)
-	}
-	defer os.Remove(TmpQrFileWrite)
 
 	serialNum := 0
 	fileName, err := getPackage(serialNum)
@@ -61,10 +56,6 @@ func RunReceiver() (string, error) {
 }
 
 func getPackage(serialNum int) (string, error) {
-	err := utils.CapturePicture(TmpQrFileRead)
-	if err != nil {
-		return "", fmt.Errorf("failed to capture picture: %w", err)
-	}
 
 	data, err := getTextFromQrCode(serialNum)
 	if err != nil {
@@ -88,6 +79,11 @@ func getTextFromQrCode(expSerialNum int) (string, error) {
 	for {
 		time.Sleep(time.Millisecond * types.WaitInterval)
 
+		err := utils.CapturePicture(TmpQrFileRead)
+		if err != nil {
+			return "", fmt.Errorf("failed to capture picture: %w", err)
+		}
+
 		text, err := utils.QrCodeToTextWithRetry(TmpQrFileRead, 10)
 		if err != nil {
 			if expSerialNum == 0 {
@@ -106,6 +102,7 @@ func getTextFromQrCode(expSerialNum int) (string, error) {
 			return "", fmt.Errorf("failed to parse text: %w", err)
 		}
 
+		fmt.Println("--- receive:", serial)
 		if serial == Terminator {
 			return "", fmt.Errorf("EOF")
 		}
@@ -119,11 +116,17 @@ func getTextFromQrCode(expSerialNum int) (string, error) {
 }
 
 func sendAck(serialNum int) error {
-	err := utils.SendTextAsQRCode(strconv.Itoa(serialNum), TmpQrFileWrite)
+	fmt.Println("--- send:", serialNum)
+
+	err := utils.SaveTextAsQRCode(addDummyInfoToAck(serialNum), TmpQrFileWrite)
 	if err != nil {
 		return fmt.Errorf("failed to send ack as qr code: %w", err)
 	}
 
 	utils.DisplayImage(TmpQrFileWrite)
 	return nil
+}
+
+func addDummyInfoToAck(serialNum int) string {
+	return strconv.Itoa(serialNum) + " " + "abcdeABCDE12345xyzXYZ678s"
 }

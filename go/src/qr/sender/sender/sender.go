@@ -71,7 +71,7 @@ func RunSender(srcFileName, dstFileName string) error {
 func sendPackage(serialNum int, fileContent string) error {
 	text := utils.BuildSerialAndDataPack(serialNum, fileContent)
 
-	err := utils.SendTextAsQRCode(text, TmpQrFileWrite)
+	err := utils.SaveTextAsQRCode(text, TmpQrFileWrite)
 	if err != nil {
 		return fmt.Errorf("failed to send text as qr code: %w", err)
 	}

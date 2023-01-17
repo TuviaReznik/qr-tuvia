@@ -28,7 +28,7 @@ func TestEncodeDecode(t *testing.T) {
 	text := GenerateRandomAlphaNumericString(20)
 	fmt.Println("- origin:", text)
 
-	err := utils.SendTextAsQRCode(text, TmpFile)
+	err := utils.SaveTextAsQRCode(text, TmpFile)
 	require.NoError(t, err)
 	defer os.Remove(TmpFile)
 
@@ -61,6 +61,6 @@ func TestQrCodeToText(t *testing.T) {
 
 func TestTextToQrCode(t *testing.T) {
 	text := GenerateRandomAlphaNumericString(20)
-	err := utils.SendTextAsQRCode(text, TmpFile)
+	err := utils.SaveTextAsQRCode(text, TmpFile)
 	require.NoError(t, err)
 }

@@ -47,14 +47,15 @@ func SaveQrCodeToImageFile(body []byte, fileName string) error {
 	return nil
 }
 
-func SendTextAsQRCode(text, writeFile string) error {
+func SaveTextAsQRCode(text, writeFile string) error {
 	enc := qrcode.NewQRCodeWriter()
 	img, err := enc.Encode(text, gozxing.BarcodeFormat_QR_CODE,
-		types.QRCodeSize, types.QRCodeSize, nil)
+		types.FrameSize, types.FrameSize, nil)
 	if err != nil {
 		return fmt.Errorf("failed to encode text: %w", err)
 	}
 
+	os.Remove(writeFile)
 	file, err := os.Create(writeFile)
 	if err != nil {
 		return fmt.Errorf("failed to create temporary qr code file: %w", err)

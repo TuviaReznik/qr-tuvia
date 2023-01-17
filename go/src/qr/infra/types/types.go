@@ -2,6 +2,6 @@ package types
 
 const (
 	MaxSize      = 1024
-	QRCodeSize   = 256
+	FrameSize    = 1024
 	WaitInterval = 50
 )
