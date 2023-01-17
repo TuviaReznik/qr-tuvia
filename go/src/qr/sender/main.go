@@ -14,6 +14,7 @@ func main() {
 	if err != nil {
 		fmt.Println("--- ERROR:", err)
 	}
+	defaultDstFile = "/Users/tuviareznik/Documents/qr/qr-tuvia/go/src/qr/receiver/big_file.txt"
 
 	srcFileName := flag.String("src", "big_file.txt", "source file path and name")
 	dstFileName := flag.String("dst", defaultDstFile, "target file name")

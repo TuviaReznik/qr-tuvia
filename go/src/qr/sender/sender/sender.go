@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/tuvirz/qr/go/src/qr/infra/types"
@@ -19,6 +20,7 @@ const (
 
 func RunSender(srcFileName, dstFileName string) error {
 
+	os.Remove(TmpQrFileRead)
 	os.Remove(TmpQrFileWrite)
 	_, err := os.Create(TmpQrFileWrite)
 	if err != nil {
@@ -70,8 +72,8 @@ func RunSender(srcFileName, dstFileName string) error {
 
 func sendPackage(serialNum int, fileContent string) error {
 	text := utils.BuildSerialAndDataPack(serialNum, fileContent)
-
-	err := utils.SaveTextAsQRCode(text, TmpQrFileWrite)
+	fmt.Println("--- send:", serialNum)
+	err := utils.SendTextAsQRCode(text, TmpQrFileWrite)
 	if err != nil {
 		return fmt.Errorf("failed to send text as qr code: %w", err)
 	}
@@ -89,7 +91,11 @@ func waitForAck(expSerialNum int) error {
 	retries := 0
 	for {
 		ack, err := getAck()
+		fmt.Println("--- expect:", expSerialNum)
+		fmt.Println("--- ack:", ack)
 		if err != nil {
+			fmt.Println("--- error:", err.Error())
+
 			if expSerialNum == 0 {
 				continue
 			}
@@ -110,6 +116,7 @@ func waitForAck(expSerialNum int) error {
 		}
 		retries = 0
 
+		ack = strings.Fields(ack)[0]
 		ackNum, err := strconv.Atoi(ack)
 		if err != nil {
 			return fmt.Errorf("failed to read ack number: %w", err)
@@ -123,10 +130,13 @@ func waitForAck(expSerialNum int) error {
 }
 
 func getAck() (string, error) {
-	err := utils.CapturePicture(TmpQrFileRead)
+
+	err := utils.CapturePictureToFile(TmpQrFileRead)
 	if err != nil {
-		return "", fmt.Errorf("failed to capture picture: %w", err)
+		return "", err
 	}
+
+	time.Sleep(time.Millisecond * 1500)
 
 	return utils.QrCodeToText(TmpQrFileRead)
 }
