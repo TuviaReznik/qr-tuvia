@@ -19,7 +19,7 @@ const (
 func RunReceiver() (string, error) {
 
 	serialNum := 0
-	fileName, err := getPackage(serialNum)
+	fileName, err := getPackageAndSendAck(serialNum)
 	if err != nil {
 		return "", err
 	}
@@ -32,7 +32,7 @@ func RunReceiver() (string, error) {
 
 	for {
 		serialNum++
-		data, err := getPackage(serialNum)
+		data, err := getPackageAndSendAck(serialNum)
 		if err != nil {
 			return "", err
 		}
@@ -46,7 +46,7 @@ func RunReceiver() (string, error) {
 		}
 	}
 
-	_, err = getPackage(Terminator)
+	_, err = getPackageAndSendAck(Terminator)
 	if err != nil {
 		return "", err
 	}
@@ -55,9 +55,9 @@ func RunReceiver() (string, error) {
 	return fileName, nil
 }
 
-func getPackage(serialNum int) (string, error) {
+func getPackageAndSendAck(serialNum int) (string, error) {
 
-	data, err := getTextFromQrCode(serialNum)
+	data, err := getPackage(serialNum)
 	if err != nil {
 		if err.Error() == "EOF" {
 			serialNum = Terminator
@@ -74,7 +74,7 @@ func getPackage(serialNum int) (string, error) {
 	return data, nil
 }
 
-func getTextFromQrCode(expSerialNum int) (string, error) {
+func getPackage(expSerialNum int) (string, error) {
 	retries := 0
 	for {
 		time.Sleep(time.Millisecond * types.WaitInterval)
@@ -108,7 +108,6 @@ func getTextFromQrCode(expSerialNum int) (string, error) {
 		}
 
 		if serial != expSerialNum {
-			// fmt.Println("--- serial:", serial)
 			continue
 		}
 		return data, nil
