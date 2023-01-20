@@ -16,7 +16,7 @@ import (
 
 const (
 	QrFile  = "./data/qrcode_hello_world.bmp"
-	TmpFile = "___qr_code_tmp___.bmp"
+	TmpFile = "___qr_code_tmp___.jpeg"
 )
 
 func init() {
@@ -63,4 +63,19 @@ func TestTextToQrCode(t *testing.T) {
 	text := GenerateRandomAlphaNumericString(20)
 	err := utils.SaveTextAsQRCode(text, TmpFile)
 	require.NoError(t, err)
+}
+
+func TestDisplayImage(t *testing.T) {
+	// os.Remove(TmpFile)
+
+	maxWindows := 40
+	for i := 0; i < maxWindows; i++ {
+		text := GenerateRandomAlphaNumericString(100)
+
+		err := utils.SaveTextAsQRCode(text, TmpFile)
+		require.NoError(t, err)
+
+		utils.DisplayImage(TmpFile)
+		time.Sleep(time.Millisecond * 200)
+	}
 }
