@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+	"runtime"
 
 	"os"
 	"strconv"
@@ -58,7 +59,7 @@ func SaveTextAsQRCode(text, writeFile string) error {
 		return fmt.Errorf("failed to encode text: %w", err)
 	}
 
-	os.Remove(writeFile)
+	// os.Remove(writeFile)
 	file, err := os.Create(writeFile)
 	if err != nil {
 		return fmt.Errorf("failed to create temporary qr code file: %w", err)
@@ -143,13 +144,31 @@ func BuildSerialAndDataPack(serial int, data string) string {
 	return fmt.Sprintf("%d %s", serial, data)
 }
 
-func DisplayImage(fileName string) {
+func UpdateImageDisplay(fileName string) error {
 	if !singleton {
-		open.Run(fileName)
-		// time.Sleep(time.Millisecond * types.WaitInterval)
+		err := DisplayImage(fileName)
+		if err != nil {
+			return fmt.Errorf("failed to dispaly image on screen: %w", err)
+		}
 		singleton = true
 	}
-	time.Sleep(time.Second * 3)
+
+	time.Sleep(time.Second * 2)
+	return nil
+}
+
+func DisplayImage(fileName string) error {
+	if runtime.GOOS == "linux" {
+		return open.Run(fileName)
+	}
+	if runtime.GOOS == "darwin" {
+		// file display isn't updated on regular apps
+		err := open.RunWith(fileName, "Visual Studio Code")
+		if err != nil {
+			return fmt.Errorf("error: %w. did you install vscode?", err)
+		}
+	}
+	return nil
 }
 
 func CapturePictureToFile(filename string) error {

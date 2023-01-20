@@ -66,7 +66,7 @@ func TestTextToQrCode(t *testing.T) {
 }
 
 func TestDisplayImage(t *testing.T) {
-	// os.Remove(TmpFile)
+	os.Remove(TmpFile)
 
 	maxWindows := 40
 	for i := 0; i < maxWindows; i++ {

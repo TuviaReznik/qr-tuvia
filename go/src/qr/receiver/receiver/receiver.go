@@ -18,6 +18,14 @@ const (
 
 func RunReceiver() (string, error) {
 
+	os.Remove(TmpQrFileRead)
+	os.Remove(TmpQrFileWrite)
+	_, err := os.Create(TmpQrFileWrite)
+	if err != nil {
+		return "", fmt.Errorf("failed to create qr code file: %w", err)
+	}
+	defer os.Remove(TmpQrFileWrite)
+
 	serialNum := 0
 	fileName, err := getPackageAndSendAck(serialNum)
 	if err != nil {
@@ -122,8 +130,7 @@ func sendAck(serialNum int) error {
 		return fmt.Errorf("failed to send ack as qr code: %w", err)
 	}
 
-	utils.DisplayImage(TmpQrFileWrite)
-	return nil
+	return utils.UpdateImageDisplay(TmpQrFileWrite)
 }
 
 func addDummyInfoToAck(serialNum int) string {

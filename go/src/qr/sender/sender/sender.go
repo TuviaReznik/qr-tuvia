@@ -78,7 +78,10 @@ func sendPackage(serialNum int, fileContent string) error {
 		return fmt.Errorf("failed to send text as qr code: %w", err)
 	}
 
-	utils.DisplayImage(TmpQrFileWrite)
+	err = utils.UpdateImageDisplay(TmpQrFileWrite)
+	if err != nil {
+		return err
+	}
 
 	err = waitForAck(serialNum)
 	if err != nil {
