@@ -15,11 +15,11 @@ import (
 	"github.com/skratchdot/open-golang/open"
 	"github.com/tuvirz/qr/go/src/qr/infra/types"
 
-	// "github.com/lazywei/go-opencv/opencv"
-
 	"github.com/makiuchi-d/gozxing"
 	"github.com/makiuchi-d/gozxing/qrcode"
 )
+
+const DummyInfo = " " + "abcdeABCDE12345xyzXYZ678"
 
 var singleton = false
 
@@ -153,7 +153,7 @@ func UpdateImageDisplay(fileName string) error {
 		singleton = true
 	}
 
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 1)
 	return nil
 }
 

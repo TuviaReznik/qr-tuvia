@@ -43,7 +43,6 @@ func RunSender(srcFileName, dstFileName string) error {
 
 	for {
 		serialNum++
-		// time.Sleep(time.Millisecond * types.WaitInterval)
 		buf := make([]byte, types.MaxSize)
 		charsNum, err := file.Read(buf)
 		if err != nil {
@@ -61,12 +60,11 @@ func RunSender(srcFileName, dstFileName string) error {
 		}
 	}
 
-	err = sendPackage(Terminator, "")
+	err = sendPackage(Terminator, utils.DummyInfo)
 	if err != nil {
 		return err
 	}
 
-	// cleanup
 	return nil
 }
 
@@ -102,14 +100,6 @@ func waitForAck(expSerialNum int) error {
 			if expSerialNum == 0 {
 				continue
 			}
-			if expSerialNum == Terminator {
-				// retry once
-				time.Sleep(time.Millisecond * types.WaitInterval * 10)
-				ack, err = getAck()
-				if err != nil {
-					return nil
-				}
-			}
 			// fmt.Println("failed to convert qr code to text:", err)
 			if retries < 10 {
 				retries++
@@ -123,6 +113,14 @@ func waitForAck(expSerialNum int) error {
 		ackNum, err := strconv.Atoi(ack)
 		if err != nil {
 			return fmt.Errorf("failed to read ack number: %w", err)
+		}
+		if expSerialNum == Terminator {
+			// retry once
+			time.Sleep(time.Millisecond * types.WaitInterval * 10)
+			ack, err = getAck()
+			if err != nil {
+				return nil
+			}
 		}
 		if ackNum == expSerialNum {
 			break
@@ -139,7 +137,7 @@ func getAck() (string, error) {
 		return "", err
 	}
 
-	time.Sleep(time.Millisecond * 1500)
+	time.Sleep(time.Millisecond * 500)
 
 	return utils.QrCodeToText(TmpQrFileRead)
 }

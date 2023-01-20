@@ -3,7 +3,6 @@ package receiver
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/tuvirz/qr/go/src/qr/infra/types"
@@ -124,14 +123,11 @@ func getPackage(expSerialNum int) (string, error) {
 func sendAck(serialNum int) error {
 	fmt.Println("--- send:", serialNum)
 
-	err := utils.SaveTextAsQRCode(addDummyInfoToAck(serialNum), TmpQrFileWrite)
+	text := utils.BuildSerialAndDataPack(serialNum, utils.DummyInfo)
+	err := utils.SaveTextAsQRCode(text, TmpQrFileWrite)
 	if err != nil {
 		return fmt.Errorf("failed to send ack as qr code: %w", err)
 	}
 
 	return utils.UpdateImageDisplay(TmpQrFileWrite)
-}
-
-func addDummyInfoToAck(serialNum int) string {
-	return strconv.Itoa(serialNum) + " " + "abcdeABCDE12345xyzXYZ678s"
 }
