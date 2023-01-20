@@ -14,9 +14,10 @@ func main() {
 	if err != nil {
 		fmt.Println("--- ERROR:", err)
 	}
-	defaultDstFile = "/Users/tuviareznik/Documents/qr/qr-tuvia/go/src/qr/receiver/big_file.txt"
+	filename := "sherlock.txt"
+	defaultDstFile = fmt.Sprintf("/Users/tuviareznik/Documents/qr/qr-tuvia/go/src/qr/receiver/%s", filename)
 
-	srcFileName := flag.String("src", "big_file.txt", "source file path and name")
+	srcFileName := flag.String("src", filename, "source file path and name")
 	dstFileName := flag.String("dst", defaultDstFile, "target file name")
 	flag.Parse()
 
