@@ -54,12 +54,11 @@ func RunReceiver() (string, error) {
 		}
 	}
 
-	_, err = getPackageAndSendAck(Terminator)
-	if err != nil {
-		return "", err
-	}
+	// _, err = getPackageAndSendAck(Terminator)
+	// if err != nil {
+	// 	return "", err
+	// }
 
-	// cleanup
 	return fileName, nil
 }
 
