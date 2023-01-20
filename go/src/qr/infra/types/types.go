@@ -1,7 +1,7 @@
 package types
 
 const (
-	MaxSize      = 1024
+	MaxSize      = 512
 	FrameSize    = 900
 	WaitInterval = 100
 )

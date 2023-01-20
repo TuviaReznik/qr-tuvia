@@ -11,14 +11,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/skratchdot/open-golang/open"
 	"github.com/tuvirz/qr/go/src/qr/infra/types"
 
 	// "github.com/lazywei/go-opencv/opencv"
 
 	"github.com/makiuchi-d/gozxing"
 	"github.com/makiuchi-d/gozxing/qrcode"
-	"github.com/skratchdot/open-golang/open"
 )
+
+var singleton = false
 
 func EncodeFileToBytes(fileName string) ([]byte, error) {
 	return os.ReadFile(fileName)
@@ -142,8 +144,12 @@ func BuildSerialAndDataPack(serial int, data string) string {
 }
 
 func DisplayImage(fileName string) {
-	open.Run(fileName)
-	time.Sleep(time.Millisecond * types.WaitInterval)
+	if !singleton {
+		open.Run(fileName)
+		// time.Sleep(time.Millisecond * types.WaitInterval)
+		singleton = true
+	}
+	time.Sleep(time.Second * 3)
 }
 
 func CapturePictureToFile(filename string) error {
