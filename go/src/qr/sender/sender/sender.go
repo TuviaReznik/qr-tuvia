@@ -96,6 +96,11 @@ func waitForAck(expSerialNum int) error {
 			if expSerialNum == 0 {
 				continue
 			}
+			if expSerialNum == Terminator {
+				// retry once
+				getAckTerminator()
+				return nil
+			}
 			if retries < 10 {
 				retries++
 				continue
@@ -111,11 +116,8 @@ func waitForAck(expSerialNum int) error {
 		}
 		if expSerialNum == Terminator {
 			// retry once
-			time.Sleep(time.Millisecond * types.WaitInterval * 10)
-			ack, err = getAck()
-			if err != nil {
-				return nil
-			}
+			getAckTerminator()
+			return nil
 		}
 		if ackNum == expSerialNum {
 			break
@@ -135,4 +137,9 @@ func getAck() (string, error) {
 	time.Sleep(time.Millisecond * 500)
 
 	return utils.QrCodeToText(TmpQrFileRead)
+}
+
+func getAckTerminator() {
+	time.Sleep(time.Millisecond * types.WaitInterval * 10)
+	_, _ = getAck()
 }
