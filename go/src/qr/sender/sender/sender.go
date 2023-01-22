@@ -27,6 +27,7 @@ func RunSender(srcFileName, dstFileName string) error {
 		return fmt.Errorf("failed to create qr code file: %w", err)
 	}
 	defer os.Remove(TmpQrFileWrite)
+	defer os.Remove(TmpQrFileRead)
 
 	file, err := os.Open(srcFileName)
 	if err != nil {

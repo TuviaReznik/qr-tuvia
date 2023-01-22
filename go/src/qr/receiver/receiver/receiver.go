@@ -24,6 +24,7 @@ func RunReceiver() (string, error) {
 		return "", fmt.Errorf("failed to create qr code file: %w", err)
 	}
 	defer os.Remove(TmpQrFileWrite)
+	defer os.Remove(TmpQrFileRead)
 
 	serialNum := 0
 	fileName, err := getPackageAndSendAck(serialNum)
