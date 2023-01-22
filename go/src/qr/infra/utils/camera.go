@@ -14,12 +14,9 @@ import (
 )
 
 const (
-	topQuality = 100
+	topQuality        = 100
+	linuxCameraDevice = "/dev/video0"
 )
-
-func getLinuxCameraDevice() string {
-	return "/dev/video0"
-}
 
 func saveFrame(fileName string, frame []byte) error {
 
@@ -36,7 +33,7 @@ func saveFrame(fileName string, frame []byte) error {
 }
 
 func saveContentToImageFile(fileName string, body []byte) error {
-	fmt.Println("--- save")
+
 	img, _, err := image.Decode(bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("failed to decode image: %w", err)
@@ -61,7 +58,7 @@ func saveContentToImageFile(fileName string, body []byte) error {
 }
 
 func capturePictureLinux(targetFileName string) error {
-	cam, err := webcam.Open(getLinuxCameraDevice())
+	cam, err := webcam.Open(linuxCameraDevice)
 	if err != nil {
 		return fmt.Errorf("failed to open camera: %w", err)
 	}
@@ -76,8 +73,7 @@ func capturePictureLinux(targetFileName string) error {
 	switch err.(type) {
 	case nil:
 	case *webcam.Timeout:
-		fmt.Println(err.Error())
-		return fmt.Errorf("failed to take a picture with camera: %w", err)
+		return fmt.Errorf("failed to take a picture with camera: timeout: %w", err)
 	default:
 		return fmt.Errorf("failed to take a picture with camera: %w", err)
 	}

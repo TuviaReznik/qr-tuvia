@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	TmpQrFileWrite = "../qr_test/data/___TMP_QR_CODE_FILE___.jpeg"
-	TmpQrFileRead  = "../qr_test/data/___TMP_ACK_FILE___.jpeg"
+	TmpQrFileWrite = "./___TMP_QR_CODE_FILE___.jpeg"
+	TmpQrFileRead  = "./___TMP_ACK_FILE___.jpeg"
 	Terminator     = -1
 )
 
@@ -70,7 +70,6 @@ func RunSender(srcFileName, dstFileName string) error {
 
 func sendPackage(serialNum int, fileContent string) error {
 	text := utils.BuildSerialAndDataPack(serialNum, fileContent)
-	fmt.Println("--- send:", serialNum)
 	err := utils.SaveTextAsQRCode(text, TmpQrFileWrite)
 	if err != nil {
 		return fmt.Errorf("failed to send text as qr code: %w", err)
@@ -92,15 +91,10 @@ func waitForAck(expSerialNum int) error {
 	retries := 0
 	for {
 		ack, err := getAck()
-		fmt.Println("--- expect:", expSerialNum)
-		fmt.Println("--- ack:", ack)
 		if err != nil {
-			fmt.Println("--- error:", err.Error())
-
 			if expSerialNum == 0 {
 				continue
 			}
-			// fmt.Println("failed to convert qr code to text:", err)
 			if retries < 10 {
 				retries++
 				continue

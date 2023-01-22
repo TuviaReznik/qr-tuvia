@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	TmpQrFileRead  = "../qr_test/data/___TMP_QR_CODE_FILE___.jpeg"
-	TmpQrFileWrite = "../qr_test/data/___TMP_ACK_FILE___.jpeg"
+	TmpQrFileRead  = "./___TMP_QR_CODE_FILE___.jpeg"
+	TmpQrFileWrite = "./___TMP_ACK_FILE___.jpeg"
 	Terminator     = -1
 )
 
@@ -52,11 +52,6 @@ func RunReceiver() (string, error) {
 			return "", fmt.Errorf("failed to write to destination file: %w", err)
 		}
 	}
-
-	// _, err = getPackageAndSendAck(Terminator)
-	// if err != nil {
-	// 	return "", err
-	// }
 
 	return fileName, nil
 }
@@ -108,7 +103,6 @@ func getPackage(expSerialNum int) (string, error) {
 			return "", fmt.Errorf("failed to parse text: %w", err)
 		}
 
-		fmt.Println("--- receive:", serial)
 		if serial == Terminator {
 			return "", fmt.Errorf("EOF")
 		}
@@ -121,8 +115,6 @@ func getPackage(expSerialNum int) (string, error) {
 }
 
 func sendAck(serialNum int) error {
-	fmt.Println("--- send:", serialNum)
-
 	text := utils.BuildSerialAndDataPack(serialNum, utils.DummyInfo)
 	err := utils.SaveTextAsQRCode(text, TmpQrFileWrite)
 	if err != nil {

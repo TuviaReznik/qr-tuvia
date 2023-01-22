@@ -59,7 +59,6 @@ func SaveTextAsQRCode(text, writeFile string) error {
 		return fmt.Errorf("failed to encode text: %w", err)
 	}
 
-	// os.Remove(writeFile)
 	file, err := os.Create(writeFile)
 	if err != nil {
 		return fmt.Errorf("failed to create temporary qr code file: %w", err)
@@ -104,8 +103,8 @@ func QrCodeToText(fileName string) (string, error) {
 	}
 
 	qrReader := qrcode.NewQRCodeReader()
+
 	result, err := qrReader.Decode(bbm, nil)
-	fmt.Println("--- res:", result)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode QRCode: %w", err)
 	}
